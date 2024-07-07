@@ -1,5 +1,7 @@
-const { Sequelize, DataTypes } = require("sequelize");
+const { DataTypes } = require("sequelize");
 const sequelize = require("../config/db");
+const Client = require("./clientModel");
+const Provider = require("./providerModel");
 
 const Service = sequelize.define("Service", {
   id: {
@@ -16,7 +18,7 @@ const Service = sequelize.define("Service", {
     allowNull: false,
   },
   price: {
-    type: DataTypes.FLOAT,
+    type: DataTypes.DECIMAL,
     allowNull: false,
   },
   requestDate: {
@@ -25,7 +27,7 @@ const Service = sequelize.define("Service", {
   },
   finishDate: {
     type: DataTypes.DATE,
-    allowNull: true,
+    allowNull: false,
   },
   status: {
     type: DataTypes.ENUM("Active", "Finished", "Declined"),
@@ -33,10 +35,18 @@ const Service = sequelize.define("Service", {
   },
   clientId: {
     type: DataTypes.INTEGER,
+    references: {
+      model: Client,
+      key: "id",
+    },
     allowNull: false,
   },
   providerId: {
     type: DataTypes.INTEGER,
+    references: {
+      model: Provider,
+      key: "id",
+    },
     allowNull: false,
   },
   city: {
@@ -48,5 +58,10 @@ const Service = sequelize.define("Service", {
     allowNull: false,
   },
 });
+
+Client.hasMany(Service, { foreignKey: "clientId" });
+Provider.hasMany(Service, { foreignKey: "providerId" });
+Service.belongsTo(Client, { foreignKey: "clientId" });
+Service.belongsTo(Provider, { foreignKey: "providerId" });
 
 module.exports = Service;
