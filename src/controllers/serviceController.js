@@ -1,9 +1,8 @@
-const { Op } = require("sequelize");
-const Service = require("../models/serviceModel");
+const serviceService = require("../services/serviceService");
 
 exports.requestService = async (req, res) => {
   try {
-    const service = await Service.create(req.body);
+    const service = await serviceService.createService(req.body);
     res.status(201).json(service);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -12,7 +11,7 @@ exports.requestService = async (req, res) => {
 
 exports.acceptService = async (req, res) => {
   try {
-    const service = await Service.findByPk(req.body.id);
+    const service = await serviceService.findServiceById(req.body.id);
     if (service) {
       await service.update({ status: "accepted" });
       res.status(200).json(service);
@@ -26,7 +25,7 @@ exports.acceptService = async (req, res) => {
 
 exports.getServices = async (req, res) => {
   try {
-    const services = await Service.findAll();
+    const services = await serviceService.getAllServices();
     res.status(200).json(services);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -35,7 +34,7 @@ exports.getServices = async (req, res) => {
 
 exports.getService = async (req, res) => {
   try {
-    const service = await Service.findByPk(req.params.id);
+    const service = await serviceService.findServiceById(req.params.id);
     if (service) {
       res.status(200).json(service);
     } else {
@@ -48,9 +47,8 @@ exports.getService = async (req, res) => {
 
 exports.updateService = async (req, res) => {
   try {
-    const service = await Service.findByPk(req.params.id);
+    const service = await serviceService.updateService(req.params.id, req.body);
     if (service) {
-      await service.update(req.body);
       res.status(200).json(service);
     } else {
       res.status(404).json({ error: "Service not found" });
@@ -62,9 +60,8 @@ exports.updateService = async (req, res) => {
 
 exports.deleteService = async (req, res) => {
   try {
-    const service = await Service.findByPk(req.params.id);
+    const service = await serviceService.deleteService(req.params.id);
     if (service) {
-      await service.destroy();
       res.status(200).json({ message: "Service deleted successfully" });
     } else {
       res.status(404).json({ error: "Service not found" });
@@ -76,9 +73,7 @@ exports.deleteService = async (req, res) => {
 
 exports.getServicesByProvider = async (req, res) => {
   try {
-    const services = await Service.findAll({
-      where: { providerId: req.params.id },
-    });
+    const services = await serviceService.getServicesByProvider(req.params.id);
     res.status(200).json(services);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -87,9 +82,7 @@ exports.getServicesByProvider = async (req, res) => {
 
 exports.getServicesByClient = async (req, res) => {
   try {
-    const services = await Service.findAll({
-      where: { clientId: req.params.id },
-    });
+    const services = await serviceService.getServicesByClient(req.params.id);
     res.status(200).json(services);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -98,9 +91,7 @@ exports.getServicesByClient = async (req, res) => {
 
 exports.getServicesByCity = async (req, res) => {
   try {
-    const services = await Service.findAll({
-      where: { city: req.params.city },
-    });
+    const services = await serviceService.getServicesByCity(req.params.city);
     res.status(200).json(services);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -109,9 +100,9 @@ exports.getServicesByCity = async (req, res) => {
 
 exports.getServicesByCategory = async (req, res) => {
   try {
-    const services = await Service.findAll({
-      where: { category: req.params.category },
-    });
+    const services = await serviceService.getServicesByCategory(
+      req.params.category
+    );
     res.status(200).json(services);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -120,9 +111,9 @@ exports.getServicesByCategory = async (req, res) => {
 
 exports.getServicesByStatus = async (req, res) => {
   try {
-    const services = await Service.findAll({
-      where: { status: req.params.status },
-    });
+    const services = await serviceService.getServicesByStatus(
+      req.params.status
+    );
     res.status(200).json(services);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -131,9 +122,7 @@ exports.getServicesByStatus = async (req, res) => {
 
 exports.getServicesByDate = async (req, res) => {
   try {
-    const services = await Service.findAll({
-      where: { requestDate: req.params.date },
-    });
+    const services = await serviceService.getServicesByDate(req.params.date);
     res.status(200).json(services);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -142,9 +131,7 @@ exports.getServicesByDate = async (req, res) => {
 
 exports.getServicesByPrice = async (req, res) => {
   try {
-    const services = await Service.findAll({
-      where: { price: req.params.price },
-    });
+    const services = await serviceService.getServicesByPrice(req.params.price);
     res.status(200).json(services);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -153,9 +140,10 @@ exports.getServicesByPrice = async (req, res) => {
 
 exports.getServicesByPriceRange = async (req, res) => {
   try {
-    const services = await Service.findAll({
-      where: { price: { [Op.between]: [req.params.min, req.params.max] } },
-    });
+    const services = await serviceService.getServicesByPriceRange(
+      req.params.min,
+      req.params.max
+    );
     res.status(200).json(services);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -164,11 +152,10 @@ exports.getServicesByPriceRange = async (req, res) => {
 
 exports.getServicesByDateRange = async (req, res) => {
   try {
-    const services = await Service.findAll({
-      where: {
-        requestDate: { [Op.between]: [req.params.start, req.params.end] },
-      },
-    });
+    const services = await serviceService.getServicesByDateRange(
+      req.params.start,
+      req.params.end
+    );
     res.status(200).json(services);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -177,9 +164,10 @@ exports.getServicesByDateRange = async (req, res) => {
 
 exports.getServicesByCityAndCategory = async (req, res) => {
   try {
-    const services = await Service.findAll({
-      where: { city: req.params.city, category: req.params.category },
-    });
+    const services = await serviceService.getServicesByCityAndCategory(
+      req.params.city,
+      req.params.category
+    );
     res.status(200).json(services);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -188,9 +176,10 @@ exports.getServicesByCityAndCategory = async (req, res) => {
 
 exports.getServicesByCityAndStatus = async (req, res) => {
   try {
-    const services = await Service.findAll({
-      where: { city: req.params.city, status: req.params.status },
-    });
+    const services = await serviceService.getServicesByCityAndStatus(
+      req.params.city,
+      req.params.status
+    );
     res.status(200).json(services);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -199,9 +188,10 @@ exports.getServicesByCityAndStatus = async (req, res) => {
 
 exports.getServicesByCategoryAndStatus = async (req, res) => {
   try {
-    const services = await Service.findAll({
-      where: { category: req.params.category, status: req.params.status },
-    });
+    const services = await serviceService.getServicesByCategoryAndStatus(
+      req.params.category,
+      req.params.status
+    );
     res.status(200).json(services);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -210,9 +200,10 @@ exports.getServicesByCategoryAndStatus = async (req, res) => {
 
 exports.getServicesByCityAndDate = async (req, res) => {
   try {
-    const services = await Service.findAll({
-      where: { city: req.params.city, requestDate: req.params.date },
-    });
+    const services = await serviceService.getServicesByCityAndDate(
+      req.params.city,
+      req.params.date
+    );
     res.status(200).json(services);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -221,9 +212,10 @@ exports.getServicesByCityAndDate = async (req, res) => {
 
 exports.getServicesByCategoryAndDate = async (req, res) => {
   try {
-    const services = await Service.findAll({
-      where: { category: req.params.category, requestDate: req.params.date },
-    });
+    const services = await serviceService.getServicesByCategoryAndDate(
+      req.params.category,
+      req.params.date
+    );
     res.status(200).json(services);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -232,9 +224,10 @@ exports.getServicesByCategoryAndDate = async (req, res) => {
 
 exports.getServicesByStatusAndDate = async (req, res) => {
   try {
-    const services = await Service.findAll({
-      where: { status: req.params.status, requestDate: req.params.date },
-    });
+    const services = await serviceService.getServicesByStatusAndDate(
+      req.params.status,
+      req.params.date
+    );
     res.status(200).json(services);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -243,9 +236,10 @@ exports.getServicesByStatusAndDate = async (req, res) => {
 
 exports.getServicesByCityAndPrice = async (req, res) => {
   try {
-    const services = await Service.findAll({
-      where: { city: req.params.city, price: req.params.price },
-    });
+    const services = await serviceService.getServicesByCityAndPrice(
+      req.params.city,
+      req.params.price
+    );
     res.status(200).json(services);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -254,9 +248,10 @@ exports.getServicesByCityAndPrice = async (req, res) => {
 
 exports.getServicesByCategoryAndPrice = async (req, res) => {
   try {
-    const services = await Service.findAll({
-      where: { category: req.params.category, price: req.params.price },
-    });
+    const services = await serviceService.getServicesByCategoryAndPrice(
+      req.params.category,
+      req.params.price
+    );
     res.status(200).json(services);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -265,9 +260,10 @@ exports.getServicesByCategoryAndPrice = async (req, res) => {
 
 exports.getServicesByStatusAndPrice = async (req, res) => {
   try {
-    const services = await Service.findAll({
-      where: { status: req.params.status, price: req.params.price },
-    });
+    const services = await serviceService.getServicesByStatusAndPrice(
+      req.params.status,
+      req.params.price
+    );
     res.status(200).json(services);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -276,12 +272,11 @@ exports.getServicesByStatusAndPrice = async (req, res) => {
 
 exports.getServicesByCityAndPriceRange = async (req, res) => {
   try {
-    const services = await Service.findAll({
-      where: {
-        city: req.params.city,
-        price: { [Op.between]: [req.params.min, req.params.max] },
-      },
-    });
+    const services = await serviceService.getServicesByCityAndPriceRange(
+      req.params.city,
+      req.params.min,
+      req.params.max
+    );
     res.status(200).json(services);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -290,12 +285,11 @@ exports.getServicesByCityAndPriceRange = async (req, res) => {
 
 exports.getServicesByCategoryAndPriceRange = async (req, res) => {
   try {
-    const services = await Service.findAll({
-      where: {
-        category: req.params.category,
-        price: { [Op.between]: [req.params.min, req.params.max] },
-      },
-    });
+    const services = await serviceService.getServicesByCategoryAndPriceRange(
+      req.params.category,
+      req.params.min,
+      req.params.max
+    );
     res.status(200).json(services);
   } catch (error) {
     res.status(400).json({ error: error.message });

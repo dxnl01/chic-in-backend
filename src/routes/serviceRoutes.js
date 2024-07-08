@@ -1,69 +1,113 @@
 const express = require("express");
 const router = express.Router();
 const serviceController = require("../controllers/serviceController");
+const authenticateToken = require("../middlewares/authenticateToken");
 
 // http://localhost:3001/services/
 
-// Rutas 
-router.post("/", serviceController.requestService);
-router.put("/:id/accept", serviceController.acceptService);
-router.get("/", serviceController.getServices);
-router.get("/:id", serviceController.getService);
-router.put("/:id", serviceController.updateService);
-router.delete("/:id", serviceController.deleteService);
+router.post("/", authenticateToken, serviceController.requestService);
+router.get("/:id", authenticateToken, serviceController.getService);
+router.put("/:id", authenticateToken, serviceController.updateService);
+router.delete("/:id", authenticateToken, serviceController.deleteService);
 
-// Filtros específicos
-router.get("/provider/:id", serviceController.getServicesByProvider);
-router.get("/client/:id", serviceController.getServicesByClient);
-router.get("/city/:city", serviceController.getServicesByCity);
-router.get("/category/:category", serviceController.getServicesByCategory);
-router.get("/status/:status", serviceController.getServicesByStatus);
-router.get("/date/:date", serviceController.getServicesByDate);
-router.get("/price/:price", serviceController.getServicesByPrice);
-router.get("/priceRange/:min/:max", serviceController.getServicesByPriceRange);
-router.get("/dateRange/:start/:end", serviceController.getServicesByDateRange);
 router.get(
-  "/city/:city/category/:category",
+  "/provider/:id",
+  authenticateToken,
+  serviceController.getServicesByProvider
+);
+router.get(
+  "/client/:id",
+  authenticateToken,
+  serviceController.getServicesByClient
+);
+router.get(
+  "/city/:city",
+  authenticateToken,
+  serviceController.getServicesByCity
+);
+router.get(
+  "/category/:category",
+  authenticateToken,
+  serviceController.getServicesByCategory
+);
+router.get(
+  "/status/:status",
+  authenticateToken,
+  serviceController.getServicesByStatus
+);
+router.get(
+  "/date/:date",
+  authenticateToken,
+  serviceController.getServicesByDate
+);
+router.get(
+  "/price/:price",
+  authenticateToken,
+  serviceController.getServicesByPrice
+);
+router.get(
+  "/price-range/:min/:max",
+  authenticateToken,
+  serviceController.getServicesByPriceRange
+);
+router.get(
+  "/date-range/:start/:end",
+  authenticateToken,
+  serviceController.getServicesByDateRange
+);
+router.get(
+  "/city-category/:city/:category",
+  authenticateToken,
   serviceController.getServicesByCityAndCategory
 );
 router.get(
-  "/city/:city/status/:status",
+  "/city-status/:city/:status",
+  authenticateToken,
   serviceController.getServicesByCityAndStatus
 );
 router.get(
-  "/category/:category/status/:status",
+  "/category-status/:category/:status",
+  authenticateToken,
   serviceController.getServicesByCategoryAndStatus
 );
 router.get(
-  "/city/:city/date/:date",
+  "/city-date/:city/:date",
+  authenticateToken,
   serviceController.getServicesByCityAndDate
 );
 router.get(
-  "/category/:category/date/:date",
+  "/category-date/:category/:date",
+  authenticateToken,
   serviceController.getServicesByCategoryAndDate
 );
 router.get(
-  "/status/:status/date/:date",
+  "/status-date/:status/:date",
+  authenticateToken,
   serviceController.getServicesByStatusAndDate
 );
 router.get(
-  "/city/:city/price/:price",
+  "/city-price/:city/:price",
+  authenticateToken,
   serviceController.getServicesByCityAndPrice
 );
 router.get(
-  "/category/:category/price/:price",
+  "/category-price/:category/:price",
+  authenticateToken,
   serviceController.getServicesByCategoryAndPrice
 );
 router.get(
-  "/status/:status/price/:price",
+  "/status-price/:status/:price",
+  authenticateToken,
   serviceController.getServicesByStatusAndPrice
 );
 router.get(
-  "/city/:city/priceRange/:min/:max",
+  "/city-price-range/:city/:min/:max",
+  authenticateToken,
   serviceController.getServicesByCityAndPriceRange
 );
 router.get(
-  "/category/:category/priceRange/:min/:max",
+  "/category-price-range/:category/:min/:max",
+  authenticateToken,
   serviceController.getServicesByCategoryAndPriceRange
 );
 

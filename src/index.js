@@ -1,21 +1,17 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const routes = require("./index.routes");
+require("dotenv").config();
 const sequelize = require("./config/db");
-
-// Importamos rutas
-const clientRoutes = require("./routes/clientRoutes");
-const providerRoutes = require("./routes/providerRoutes");
-const serviceRoutes = require("./routes/serviceRoutes");
+const authenticateToken = require("./middlewares/authenticateToken");
 
 const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
 
-// Usamos rutas
-app.use("/clients", clientRoutes);
-app.use("/providers", providerRoutes);
-app.use("/services", serviceRoutes);
+// Usar las rutas principales
+app.use("/api", routes);
 
 sequelize.sync({ force: true }).then(() => {
   app.listen(port, () => {

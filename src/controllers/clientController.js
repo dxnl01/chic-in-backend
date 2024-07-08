@@ -1,24 +1,25 @@
-const Client = require("../models/clientModel");
+const clientService = require("../services/clientService");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-// Registrar un nuevo cliente
 exports.signup = async (req, res) => {
   try {
     const { password, ...rest } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
-    const client = await Client.create({ ...rest, password: hashedPassword });
+    const client = await clientService.createClient({
+      ...rest,
+      password: hashedPassword,
+    });
     res.status(201).json(client);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
 
-// Iniciar sesión
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    const client = await Client.findOne({ where: { email } });
+    const client = await clientService.findClientByEmail(email);
     if (client && (await bcrypt.compare(password, client.password))) {
       const token = jwt.sign({ id: client.id }, process.env.JWT_SECRET, {
         expiresIn: "1h",
@@ -32,7 +33,6 @@ exports.login = async (req, res) => {
   }
 };
 
-// Cerrar sesión
 exports.logout = async (req, res) => {
   try {
     res.status(200).json({ message: "Logged out successfully" });
@@ -41,20 +41,18 @@ exports.logout = async (req, res) => {
   }
 };
 
-// Obtener todos los clientes
 exports.getAllClients = async (req, res) => {
   try {
-    const clients = await Client.findAll();
+    const clients = await clientService.getAllClients();
     res.status(200).json(clients);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
-// Obtener un cliente por ID
 exports.getClientById = async (req, res) => {
   try {
-    const client = await Client.findByPk(req.params.id);
+    const client = await clientService.findClientById(req.params.id);
     if (client) {
       res.status(200).json(client);
     } else {
@@ -65,11 +63,10 @@ exports.getClientById = async (req, res) => {
   }
 };
 
-// Actualizar un cliente
 exports.updateClient = async (req, res) => {
   try {
     const { password, ...rest } = req.body;
-    const updatedClient = await Client.findByPk(req.params.id);
+    const updatedClient = await clientService.findClientById(req.params.id);
     if (updatedClient) {
       if (password) {
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -86,12 +83,9 @@ exports.updateClient = async (req, res) => {
   }
 };
 
-// Eliminar un cliente
 exports.deleteClient = async (req, res) => {
   try {
-    const deleted = await Client.destroy({
-      where: { id: req.params.id },
-    });
+    const deleted = await clientService.deleteClient(req.params.id);
     if (deleted) {
       res.status(204).send();
     } else {
