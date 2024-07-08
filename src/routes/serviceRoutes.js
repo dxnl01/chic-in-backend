@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const serviceController = require("../controllers/serviceController");
 
+// http://localhost:3001/services/
+
 // Rutas 
 router.post("/", serviceController.requestService);
 router.put("/:id/accept", serviceController.acceptService);

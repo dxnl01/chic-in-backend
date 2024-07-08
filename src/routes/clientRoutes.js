@@ -1,14 +1,17 @@
 const express = require("express");
 const router = express.Router();
 const clientController = require("../controllers/clientController");
+const authenticateToken = require("../middleware/authenticateToken");
+
+// http://localhost:3001/clients/
 
 router.post("/signup", clientController.signup);
 router.post("/login", clientController.login);
-router.post("/logout", clientController.logout);
+router.post("/logout", authenticateToken, clientController.logout);
 
-router.get("/", clientController.getAllClients);
-router.get("/:id", clientController.getClientById);
-router.put("/:id", clientController.updateClient);
-router.delete("/:id", clientController.deleteClient);
+router.get("/", authenticateToken, clientController.getAllClients);
+router.get("/:id", authenticateToken, clientController.getClientById);
+router.put("/:id", authenticateToken, clientController.updateClient);
+router.delete("/:id", authenticateToken, clientController.deleteClient);
 
 module.exports = router;

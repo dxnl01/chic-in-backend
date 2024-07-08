@@ -1,8 +1,15 @@
 const Provider = require("../models/providerModel");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 exports.signup = async (req, res) => {
   try {
-    const provider = await Provider.create(req.body);
+    const { password, ...rest } = req.body;
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const provider = await Provider.create({
+      ...rest,
+      password: hashedPassword,
+    });
     res.status(201).json(provider);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -12,9 +19,12 @@ exports.signup = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    const provider = await Provider.findOne({ where: { email, password } });
-    if (provider) {
-      res.status(200).json(provider);
+    const provider = await Provider.findOne({ where: { email } });
+    if (provider && (await bcrypt.compare(password, provider.password))) {
+      const token = jwt.sign({ id: provider.id }, process.env.JWT_SECRET, {
+        expiresIn: "1h",
+      });
+      res.status(200).json({ provider, token });
     } else {
       res.status(400).json({ error: "Invalid email or password" });
     }
@@ -55,10 +65,16 @@ exports.getProvider = async (req, res) => {
 
 exports.updateProvider = async (req, res) => {
   try {
-    const provider = await Provider.findByPk(req.params.id);
-    if (provider) {
-      await provider.update(req.body);
-      res.status(200).json(provider);
+    const { password, ...rest } = req.body;
+    const updatedProvider = await Provider.findByPk(req.params.id);
+    if (updatedProvider) {
+      if (password) {
+        const hashedPassword = await bcrypt.hash(password, 10);
+        await updatedProvider.update({ ...rest, password: hashedPassword });
+      } else {
+        await updatedProvider.update(rest);
+      }
+      res.status(200).json(updatedProvider);
     } else {
       res.status(404).json({ error: "Provider not found" });
     }
