@@ -3,8 +3,6 @@ const router = express.Router();
 const clientController = require("../controllers/clientController");
 const authenticateToken = require("../middleware/authenticateToken");
 
-// http://localhost:3001/clients/
-
 router.post("/signup", clientController.signup);
 router.post("/login", clientController.login);
 router.post("/logout", authenticateToken, clientController.logout);

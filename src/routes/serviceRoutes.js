@@ -3,9 +3,10 @@ const router = express.Router();
 const serviceController = require("../controllers/serviceController");
 const authenticateToken = require("../middleware/authenticateToken");
 
-// http://localhost:3001/services/
-
 router.post("/", authenticateToken, serviceController.requestService);
+router.put("/accept/:id", authenticateToken, serviceController.acceptService);
+router.put("/reject/:id", authenticateToken, serviceController.rejectService);
+router.get("/", authenticateToken, serviceController.getServices);
 router.get("/:id", authenticateToken, serviceController.getService);
 router.put("/:id", authenticateToken, serviceController.updateService);
 router.delete("/:id", authenticateToken, serviceController.deleteService);

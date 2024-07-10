@@ -31,9 +31,12 @@ router.get("/", (req, res) => {
     },
     services: {
       requestService: "POST /api/services",
+      acceptService: "PUT /api/services/accept/:id", // Auth required
+      rejectService: "PUT /api/services/reject/:id", // Auth required
       getServiceById: "GET /api/services/:id",
       updateService: "PUT /api/services/:id", // Auth required
       deleteService: "DELETE /api/services/:id", // Auth required
+      getAllServices: "GET /api/services", // Auth required
       getServicesByProvider: "GET /api/services/provider/:id",
       getServicesByClient: "GET /api/services/client/:id",
       getServicesByCity: "GET /api/services/city/:city",

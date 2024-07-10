@@ -11,9 +11,23 @@ exports.requestService = async (req, res) => {
 
 exports.acceptService = async (req, res) => {
   try {
-    const service = await serviceService.findServiceById(req.body.id);
+    const service = await serviceService.findServiceById(req.params.id);
     if (service) {
-      await service.update({ status: "accepted" });
+      await serviceService.updateService(service.id, { status: "accepted" });
+      res.status(200).json(service);
+    } else {
+      res.status(404).json({ error: "Service not found" });
+    }
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+exports.rejectService = async (req, res) => {
+  try {
+    const service = await serviceService.findServiceById(req.params.id);
+    if (service) {
+      await serviceService.updateService(service.id, { status: "rejected" });
       res.status(200).json(service);
     } else {
       res.status(404).json({ error: "Service not found" });
