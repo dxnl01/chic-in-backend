@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const serviceController = require("../controllers/serviceController");
-const authenticateToken = require("../middlewares/authenticateToken");
+const authenticateToken = require("../middleware/authenticateToken");
 
 // http://localhost:3001/services/
 

@@ -1,9 +1,9 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const routes = require("./index.routes");
+const routes = require("./routes/index.routes");
 require("dotenv").config();
 const sequelize = require("./config/db");
-const authenticateToken = require("./middlewares/authenticateToken");
+const authenticateToken = require("./middleware/authenticateToken");
 
 const app = express();
 const port = process.env.PORT || 3000;
