@@ -22,7 +22,7 @@ exports.login = async (req, res) => {
     const client = await clientService.findClientByEmail(email);
     if (client && (await bcrypt.compare(password, client.password))) {
       const token = jwt.sign({ id: client.id }, process.env.JWT_SECRET, {
-        expiresIn: "1h",
+        expiresIn: "7d",
       });
       res.status(200).json({ client, token });
     } else {
