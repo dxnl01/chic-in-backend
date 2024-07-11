@@ -2,12 +2,18 @@ const serviceService = require("../services/serviceService");
 
 exports.requestService = async (req, res) => {
   try {
-    const service = await serviceService.createService(req.body);
+    const { client_id, provider_id, ...rest } = req.body;
+    const service = await serviceService.createService({
+      ...rest,
+      client_id: client_id || null,
+      provider_id: provider_id || null,
+    });
     res.status(201).json(service);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
+
 
 exports.acceptService = async (req, res) => {
   try {
