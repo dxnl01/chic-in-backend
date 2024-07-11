@@ -3,14 +3,15 @@ const bodyParser = require("body-parser");
 const router = require("./routes/index.routes");
 require("dotenv").config();
 const sequelize = require("./config/db");
-const authenticateToken = require("./middleware/authenticateToken");
+const cors = require("cors");
 
 const app = express();
 const port = process.env.PORT || 3000;
 
+app.use(cors());
 app.use(bodyParser.json());
 
-// Usar las rutas principales
+// Ruta principal
 app.use("/api", router);
 
 sequelize.sync().then(() => {

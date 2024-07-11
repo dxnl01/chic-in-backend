@@ -2,7 +2,6 @@ const express = require("express");
 const clientRoutes = require("./clientRoutes");
 const providerRoutes = require("./providerRoutes");
 const serviceRoutes = require("./serviceRoutes");
-const authenticateToken = require("../middleware/authenticateToken");
 
 const router = express.Router();
 
