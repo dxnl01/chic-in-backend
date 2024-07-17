@@ -1,4 +1,30 @@
 const serviceService = require("../services/serviceService");
+const AWS = require("aws-sdk");
+
+AWS.config.update({
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  region: process.env.AWS_REGION,
+});
+
+const sns = new AWS.SNS();
+
+const sendSMS = (phoneNumber, message) => {
+  const params = {
+    Message: message,
+    PhoneNumber: phoneNumber,
+  };
+
+  console.log(`Enviando SMS a ${phoneNumber} con mensaje: "${message}"`);
+
+  sns.publish(params, (err, data) => {
+    if (err) {
+      console.error(err, err.stack);
+    } else {
+      console.log(`SMS enviado. MessageID: ${data.MessageId}`);
+    }
+  });
+};
 
 exports.requestService = async (req, res) => {
   try {
@@ -21,6 +47,12 @@ exports.acceptService = async (req, res) => {
     const service = await serviceService.findServiceById(req.params.id);
     if (service) {
       await serviceService.updateService(service.id, { status: "accepted" });
+
+      const client = await clientService.findClientById(service.clientId);
+      if (client) {
+        sendSMS(client.phone, "Tu servicio ha sido aceptado");
+      }
+
       res.status(200).json(service);
     } else {
       res.status(404).json({ error: "Service not found" });
@@ -35,6 +67,12 @@ exports.rejectService = async (req, res) => {
     const service = await serviceService.findServiceById(req.params.id);
     if (service) {
       await serviceService.updateService(service.id, { status: "rejected" });
+
+      const client = await clientService.findClientById(service.clientId);
+      if (client) {
+        sendSMS(client.phone, "Tu servicio ha sido cancelado");
+      }
+
       res.status(200).json(service);
     } else {
       res.status(404).json({ error: "Service not found" });
