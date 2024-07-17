@@ -1,4 +1,5 @@
 const serviceService = require("../services/serviceService");
+const clientService = require("../services/clientService");
 const AWS = require("aws-sdk");
 
 AWS.config.update({
