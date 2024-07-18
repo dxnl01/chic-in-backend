@@ -9,12 +9,14 @@ const vonage = new Vonage({
 
 const sendSMS = (phoneNumber, message) => {
   const from = "VonageSMS";
-  const to = phoneNumber;
+  const to = phoneNumber.startsWith("+57") ? phoneNumber : `+57${phoneNumber}`;
   const text = message;
+
+  console.log(`Enviando SMS a ${to} con mensaje: "${text}"`);
 
   vonage.message.sendSms(from, to, text, (err, responseData) => {
     if (err) {
-      console.log(err);
+      console.error(err);
     } else {
       if (responseData.messages[0].status === "0") {
         console.log("Message sent successfully.");
@@ -81,6 +83,8 @@ exports.rejectService = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
+
+// Resto de los métodos sin cambios
 
 exports.getServices = async (req, res) => {
   try {
