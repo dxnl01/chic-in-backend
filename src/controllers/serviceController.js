@@ -1,28 +1,28 @@
 const serviceService = require("../services/serviceService");
 const clientService = require("../services/clientService");
-const AWS = require("aws-sdk");
+const { Vonage } = require("@vonage/server-sdk");
 
-AWS.config.update({
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  region: process.env.AWS_REGION,
+const vonage = new Vonage({
+  apiKey: process.env.VONAGE_API_KEY,
+  apiSecret: process.env.VONAGE_API_SECRET,
 });
 
-const sns = new AWS.SNS();
-
 const sendSMS = (phoneNumber, message) => {
-  const params = {
-    Message: message,
-    PhoneNumber: phoneNumber,
-  };
+  const from = "VonageSMS";
+  const to = phoneNumber;
+  const text = message;
 
-  console.log(`Enviando SMS a ${phoneNumber} con mensaje: "${message}"`);
-
-  sns.publish(params, (err, data) => {
+  vonage.message.sendSms(from, to, text, (err, responseData) => {
     if (err) {
-      console.error(err, err.stack);
+      console.log(err);
     } else {
-      console.log(`SMS enviado. MessageID: ${data.MessageId}`);
+      if (responseData.messages[0].status === "0") {
+        console.log("Message sent successfully.");
+      } else {
+        console.log(
+          `Message failed with error: ${responseData.messages[0]["error-text"]}`
+        );
+      }
     }
   });
 };
@@ -41,7 +41,6 @@ exports.requestService = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
-
 
 exports.acceptService = async (req, res) => {
   try {
