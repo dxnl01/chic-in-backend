@@ -2,6 +2,7 @@ const express = require("express");
 const clientRoutes = require("./clientRoutes");
 const providerRoutes = require("./providerRoutes");
 const serviceRoutes = require("./serviceRoutes");
+const microserviceRoutes = require("./microserviceRoutes");
 
 const router = express.Router();
 
@@ -75,5 +76,8 @@ router.use("/providers", providerRoutes);
 
 // Rutas para los servicios (base path: /api/services)
 router.use("/services", serviceRoutes);
+
+// Rutas para los microservicios (base path: /api/microservices)
+router.use("/microservices", microserviceRoutes);
 
 module.exports = router;

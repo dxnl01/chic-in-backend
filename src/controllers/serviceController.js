@@ -33,13 +33,21 @@ const sendSMS = (phoneNumber, message) => {
 
 exports.requestService = async (req, res) => {
   try {
-    const { clientId, providerId, ...rest } = req.body;
+    const { clientId, providerId, microserviceIds, ...rest } = req.body;
     const service = await serviceService.createService({
       ...rest,
       clientId: clientId || null,
       providerId: providerId || null,
       status: "Pending",
     });
+
+    if (microserviceIds && microserviceIds.length) {
+      const microservices = await microserviceService.findMicroservicesByIds(
+        microserviceIds
+      );
+      await service.setMicroservices(microservices);
+    }
+
     res.status(201).json(service);
   } catch (error) {
     res.status(400).json({ error: error.message });
