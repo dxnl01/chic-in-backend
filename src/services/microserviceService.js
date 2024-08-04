@@ -16,8 +16,13 @@ const findMicroservicesByIds = async (ids) => {
   });
 };
 
+const getAllMicroservices = async () => {
+  return await Microservice.findAll();
+};
+
 module.exports = {
   createMicroservice,
   findMicroserviceById,
   findMicroservicesByIds,
+  getAllMicroservices,
 };
