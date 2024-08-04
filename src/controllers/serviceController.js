@@ -1,14 +1,11 @@
 const serviceService = require("../services/serviceService");
 const clientService = require("../services/clientService");
+const Microservice = require("../models/microserviceModel");
 const { Vonage } = require("@vonage/server-sdk");
-
-const privateKey = process.env.VONAGE_PRIVATE_KEY.replace(/\\n/g, "\n");
 
 const vonage = new Vonage({
   apiKey: process.env.VONAGE_API_KEY,
   apiSecret: process.env.VONAGE_API_SECRET,
-  applicationId: process.env.VONAGE_APPLICATION_ID,
-  privateKey: privateKey,
 });
 
 const sendSMS = (phoneNumber, message) => {
@@ -16,7 +13,7 @@ const sendSMS = (phoneNumber, message) => {
   const to = phoneNumber;
   const text = message;
 
-  vonage.message.sendSms(from, to, text, (err, responseData) => {
+  vonage.sms.send({ to, from, text }, (err, responseData) => {
     if (err) {
       console.log(err);
     } else {
@@ -33,22 +30,29 @@ const sendSMS = (phoneNumber, message) => {
 
 exports.requestService = async (req, res) => {
   try {
-    const { clientId, providerId, microserviceIds, ...rest } = req.body;
+    const { clientId, providerId, ...rest } = req.body;
     const service = await serviceService.createService({
       ...rest,
       clientId: clientId || null,
       providerId: providerId || null,
       status: "Pending",
     });
-
-    if (microserviceIds && microserviceIds.length) {
-      const microservices = await microserviceService.findMicroservicesByIds(
-        microserviceIds
-      );
-      await service.setMicroservices(microservices);
-    }
-
     res.status(201).json(service);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+exports.getService = async (req, res) => {
+  try {
+    const service = await serviceService.findServiceById(req.params.id, {
+      include: [{ model: Microservice }],
+    });
+    if (service) {
+      res.status(200).json(service);
+    } else {
+      res.status(404).json({ error: "Service not found" });
+    }
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -96,21 +100,10 @@ exports.rejectService = async (req, res) => {
 
 exports.getServices = async (req, res) => {
   try {
-    const services = await serviceService.getAllServices();
+    const services = await serviceService.getAllServices({
+      include: [{ model: Microservice }],
+    });
     res.status(200).json(services);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-};
-
-exports.getService = async (req, res) => {
-  try {
-    const service = await serviceService.findServiceById(req.params.id);
-    if (service) {
-      res.status(200).json(service);
-    } else {
-      res.status(404).json({ error: "Service not found" });
-    }
   } catch (error) {
     res.status(400).json({ error: error.message });
   }

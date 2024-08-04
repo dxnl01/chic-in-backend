@@ -31,13 +31,7 @@ const Service = sequelize.define("Service", {
     allowNull: false,
   },
   status: {
-    type: DataTypes.ENUM(
-      "Active",
-      "Finished",
-      "Declined",
-      "Pending",
-      "Accepted"
-    ),
+    type: DataTypes.ENUM("Active", "Finished", "Declined", "Pending"),
     allowNull: false,
   },
   clientId: {
@@ -46,7 +40,7 @@ const Service = sequelize.define("Service", {
       model: Client,
       key: "id",
     },
-    allowNull: true,
+    allowNull: false,
   },
   providerId: {
     type: DataTypes.INTEGER,
@@ -54,7 +48,7 @@ const Service = sequelize.define("Service", {
       model: Provider,
       key: "id",
     },
-    allowNull: true,
+    allowNull: false,
   },
   city: {
     type: DataTypes.STRING,
@@ -66,8 +60,15 @@ const Service = sequelize.define("Service", {
   },
 });
 
-Service.belongsToMany(Microservice, { through: "ServiceMicroservices" });
-Microservice.belongsToMany(Service, { through: "ServiceMicroservices" });
+// Definimos la relacion muchos a muchos
+Service.belongsToMany(Microservice, {
+  through: "ServiceMicroservices",
+  foreignKey: "service_id",
+});
+Microservice.belongsToMany(Service, {
+  through: "ServiceMicroservices",
+  foreignKey: "microservice_id",
+});
 
 Client.hasMany(Service, { foreignKey: "clientId" });
 Provider.hasMany(Service, { foreignKey: "providerId" });

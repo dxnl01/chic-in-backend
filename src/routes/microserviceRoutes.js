@@ -1,11 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const microserviceController = require("../controllers/microserviceController");
+const authenticateToken = require("../middleware/authenticateToken");
 
-router.post("/", microserviceController.createMicroservice);
-router.get("/", microserviceController.getAllMicroservices);
-router.get("/:id", microserviceController.getMicroserviceById);
-router.put("/:id", microserviceController.updateMicroservice);
-router.delete("/:id", microserviceController.deleteMicroservice);
+router.post("/", authenticateToken, microserviceController.createMicroservice);
+router.get("/", authenticateToken, microserviceController.getAllMicroservices);
+router.get("/:id", authenticateToken, microserviceController.getMicroserviceById);
+router.put("/:id", authenticateToken, microserviceController.updateMicroservice);
+router.delete("/:id", authenticateToken, microserviceController.deleteMicroservice);
 
 module.exports = router;
