@@ -1,11 +1,34 @@
 const Service = require("../models/serviceModel");
+const Microservice = require("../models/microserviceModel");
 
 const createService = async (data) => {
   return await Service.create(data);
 };
 
+const createMicroservice = async (data) => {
+  return await Microservice.create(data);
+};
+
+const addMicroserviceToService = async (serviceId, microserviceId) => {
+  return await ServiceMicroservices.create({
+    service_id: serviceId,
+    microservice_id: microserviceId,
+  });
+};
+
 const findServiceById = async (id) => {
-  return await Service.findByPk(id);
+  const service = await Service.findByPk(id, {
+    include: [{ model: Microservice, through: { attributes: [] } }],
+  });
+
+  const microserviceIds = service.Microservices.map(
+    (microservice) => microservice.id
+  );
+
+  return {
+    ...service.toJSON(),
+    microservices: microserviceIds,
+  };
 };
 
 const updateService = async (id, data) => {
@@ -119,6 +142,8 @@ const getServicesByCategoryAndPriceRange = async (category, min, max) => {
 
 module.exports = {
   createService,
+  createMicroservice,
+  addMicroserviceToService,
   findServiceById,
   updateService,
   deleteService,

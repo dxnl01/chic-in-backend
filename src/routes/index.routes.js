@@ -65,6 +65,13 @@ router.get("/", (req, res) => {
       getServicesByCategoryAndPriceRange:
         "GET /api/services/category-price-range/:category/:min/:max",
     },
+    microservices: {
+      createMicroservice: "POST /api/microservices",
+      getAllMicroservices: "GET /api/microservices", // Auth required
+      getMicroserviceById: "GET /api/microservices/:id", // Auth required
+      updateMicroservice: "PUT /api/microservices/:id", // Auth required
+      deleteMicroservice: "DELETE /api/microservices/:id", // Auth required
+    },
   });
 });
 

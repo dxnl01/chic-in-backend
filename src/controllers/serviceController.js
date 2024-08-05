@@ -1,6 +1,5 @@
 const serviceService = require("../services/serviceService");
 const clientService = require("../services/clientService");
-const Microservice = require("../models/microserviceModel");
 const { Vonage } = require("@vonage/server-sdk");
 
 const vonage = new Vonage({
@@ -29,15 +28,29 @@ const sendSMS = (phoneNumber, message) => {
 };
 
 exports.requestService = async (req, res) => {
+  const { serviceData, microservices } = req.body;
+
   try {
-    const { clientId, providerId, ...rest } = req.body;
-    const service = await serviceService.createService({
-      ...rest,
-      clientId: clientId || null,
-      providerId: providerId || null,
-      status: "Pending",
-    });
-    res.status(201).json(service);
+    const service = await serviceService.createService(serviceData);
+
+    const microserviceIds = [];
+    for (const microserviceData of microservices) {
+      const microservice = await serviceService.createMicroservice(
+        microserviceData
+      );
+      await serviceService.addMicroserviceToService(
+        service.id,
+        microservice.id
+      );
+      microserviceIds.push(microservice.id);
+    }
+
+    const serviceWithMicroserviceIds = {
+      ...service.toJSON(),
+      microservices: microserviceIds,
+    };
+
+    res.status(201).json(serviceWithMicroserviceIds);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
