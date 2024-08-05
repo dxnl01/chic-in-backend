@@ -2,7 +2,25 @@ const Service = require("../models/serviceModel");
 const Microservice = require("../models/microserviceModel");
 
 const createService = async (data) => {
-  return await Service.create(data);
+  const { microservices, ...serviceData } = data;
+  const service = await Service.create(serviceData);
+
+  if (microservices && microservices.length > 0) {
+    const microservicePromises = microservices.map(async (microserviceData) => {
+      const [microservice] = await Microservice.findOrCreate({
+        where: {
+          serviceType: microserviceData.serviceType,
+          technique: microserviceData.technique,
+        },
+        defaults: microserviceData,
+      });
+      return microservice.id;
+    });
+    const microserviceIds = await Promise.all(microservicePromises);
+    await service.setMicroservices(microserviceIds);
+  }
+
+  return service;
 };
 
 const createMicroservice = async (data) => {
@@ -17,24 +35,38 @@ const addMicroserviceToService = async (serviceId, microserviceId) => {
 };
 
 const findServiceById = async (id) => {
-  const service = await Service.findByPk(id, {
-    include: [{ model: Microservice, through: { attributes: [] } }],
+  return await Service.findByPk(id, {
+    include: {
+      model: Microservice,
+      through: { attributes: [] }, 
+    },
   });
-
-  const microserviceIds = service.Microservices.map(
-    (microservice) => microservice.id
-  );
-
-  return {
-    ...service.toJSON(),
-    microservices: microserviceIds,
-  };
 };
 
 const updateService = async (id, data) => {
   const service = await Service.findByPk(id);
   if (service) {
-    return await service.update(data);
+    const { microservices, ...serviceData } = data;
+    await service.update(serviceData);
+
+    if (microservices && microservices.length > 0) {
+      const microservicePromises = microservices.map(
+        async (microserviceData) => {
+          const [microservice] = await Microservice.findOrCreate({
+            where: {
+              serviceType: microserviceData.serviceType,
+              technique: microserviceData.technique,
+            },
+            defaults: microserviceData,
+          });
+          return microservice.id;
+        }
+      );
+      const microserviceIds = await Promise.all(microservicePromises);
+      await service.setMicroservices(microserviceIds);
+    }
+
+    return service;
   }
   return null;
 };
@@ -49,7 +81,12 @@ const deleteService = async (id) => {
 };
 
 const getAllServices = async () => {
-  return await Service.findAll();
+  return await Service.findAll({
+    include: {
+      model: Microservice,
+      through: { attributes: [] },
+    },
+  });
 };
 
 const getServicesByProvider = async (providerId) => {
