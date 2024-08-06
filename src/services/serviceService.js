@@ -13,14 +13,10 @@ const createService = async (data) => {
         },
         defaults: microserviceData,
       });
-      return microservice;
+      return microservice.id;
     });
-    const createdMicroservices = await Promise.all(microservicePromises);
-    const microserviceIds = createdMicroservices.map(
-      (microservice) => microservice.id
-    );
-
-    await service.setMicroservices(microserviceIds);
+    const microserviceIds = await Promise.all(microservicePromises);
+    await service.addMicroservices(microserviceIds);
   }
 
   return service;
