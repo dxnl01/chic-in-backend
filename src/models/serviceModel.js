@@ -1,6 +1,3 @@
-const Client = require("./clientModel");
-const Provider = require("./providerModel");
-
 module.exports = (sequelize, DataTypes) => {
   const Service = sequelize.define("Service", {
     id: {
@@ -26,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     finishDate: {
       type: DataTypes.DATE,
-      allowNull: false,
+      allowNull: true,
     },
     status: {
       type: DataTypes.ENUM("Active", "Finished", "Declined", "Pending"),
@@ -35,7 +32,7 @@ module.exports = (sequelize, DataTypes) => {
     clientId: {
       type: DataTypes.INTEGER,
       references: {
-        model: Client,
+        model: "Clients",
         key: "id",
       },
       allowNull: false,
@@ -43,7 +40,7 @@ module.exports = (sequelize, DataTypes) => {
     providerId: {
       type: DataTypes.INTEGER,
       references: {
-        model: Provider,
+        model: "Providers",
         key: "id",
       },
       allowNull: true,

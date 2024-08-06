@@ -6,6 +6,7 @@ module.exports = (sequelize, DataTypes) => {
         model: "Services",
         key: "id",
       },
+      allowNull: false,
     },
     microserviceId: {
       type: DataTypes.INTEGER,
@@ -13,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
         model: "Microservices",
         key: "id",
       },
+      allowNull: false,
     },
   });
 

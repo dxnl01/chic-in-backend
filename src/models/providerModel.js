@@ -11,8 +11,8 @@ module.exports = (sequelize, DataTypes) => {
     },
     email: {
       type: DataTypes.STRING,
-      unique: true,
       allowNull: false,
+      unique: true,
     },
     password: {
       type: DataTypes.STRING,
@@ -24,11 +24,12 @@ module.exports = (sequelize, DataTypes) => {
     },
     phone: {
       type: DataTypes.STRING,
-      allowNull: false,
     },
     categories: {
+      type: DataTypes.ARRAY(DataTypes.TEXT),
+    },
+    authToken: {
       type: DataTypes.STRING,
-      allowNull: false,
     },
   });
 
