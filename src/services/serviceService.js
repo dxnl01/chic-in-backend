@@ -13,9 +13,13 @@ const createService = async (data) => {
         },
         defaults: microserviceData,
       });
-      return microservice.id;
+      return microservice;
     });
-    const microserviceIds = await Promise.all(microservicePromises);
+    const createdMicroservices = await Promise.all(microservicePromises);
+    const microserviceIds = createdMicroservices.map(
+      (microservice) => microservice.id
+    );
+
     await service.setMicroservices(microserviceIds);
   }
 
@@ -38,7 +42,7 @@ const findServiceById = async (id) => {
     include: [
       {
         model: Microservice,
-        through: { attributes: [] },
+        through: { attributes: [] }, 
       },
     ],
   });

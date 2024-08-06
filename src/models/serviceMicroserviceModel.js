@@ -1,6 +1,3 @@
-const { DataTypes } = require("sequelize");
-const sequelize = require("../config/db");
-
 module.exports = (sequelize, DataTypes) => {
   const ServiceMicroservices = sequelize.define("ServiceMicroservices", {
     serviceId: {
@@ -9,7 +6,6 @@ module.exports = (sequelize, DataTypes) => {
         model: "Services",
         key: "id",
       },
-      allowNull: false,
     },
     microserviceId: {
       type: DataTypes.INTEGER,
@@ -17,7 +13,6 @@ module.exports = (sequelize, DataTypes) => {
         model: "Microservices",
         key: "id",
       },
-      allowNull: false,
     },
   });
 

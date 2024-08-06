@@ -1,5 +1,5 @@
-const { DataTypes } = require("sequelize");
-const sequelize = require("../config/db");
+const Client = require("./clientModel");
+const Provider = require("./providerModel");
 
 module.exports = (sequelize, DataTypes) => {
   const Service = sequelize.define("Service", {
@@ -35,7 +35,7 @@ module.exports = (sequelize, DataTypes) => {
     clientId: {
       type: DataTypes.INTEGER,
       references: {
-        model: "Clients",
+        model: Client,
         key: "id",
       },
       allowNull: false,
@@ -43,7 +43,7 @@ module.exports = (sequelize, DataTypes) => {
     providerId: {
       type: DataTypes.INTEGER,
       references: {
-        model: "Providers",
+        model: Provider,
         key: "id",
       },
       allowNull: true,
