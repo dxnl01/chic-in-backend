@@ -1,7 +1,5 @@
-const Client = require("./clientModel");
-const Provider = require("./providerModel");
-const Microservice = require("./microserviceModel");
-const ServiceMicroservices = require("./serviceMicroserviceModel");
+const { DataTypes } = require("sequelize");
+const sequelize = require("../config/db");
 
 module.exports = (sequelize, DataTypes) => {
   const Service = sequelize.define("Service", {
@@ -37,7 +35,7 @@ module.exports = (sequelize, DataTypes) => {
     clientId: {
       type: DataTypes.INTEGER,
       references: {
-        model: Client,
+        model: "Clients",
         key: "id",
       },
       allowNull: false,
@@ -45,7 +43,7 @@ module.exports = (sequelize, DataTypes) => {
     providerId: {
       type: DataTypes.INTEGER,
       references: {
-        model: Provider,
+        model: "Providers",
         key: "id",
       },
       allowNull: true,
@@ -58,11 +56,6 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
-  });
-
-  Service.belongsToMany(Microservice, {
-    through: ServiceMicroservices,
-    foreignKey: "serviceId",
   });
 
   return Service;

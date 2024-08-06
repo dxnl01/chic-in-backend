@@ -1,5 +1,4 @@
-const Service = require("../models/serviceModel");
-const Microservice = require("../models/microserviceModel");
+const { Service, Microservice, ServiceMicroservices } = require("../models");
 
 const createService = async (data) => {
   const { microservices, ...serviceData } = data;
@@ -36,10 +35,12 @@ const addMicroserviceToService = async (serviceId, microserviceId) => {
 
 const findServiceById = async (id) => {
   return await Service.findByPk(id, {
-    include: {
-      model: Microservice,
-      through: { attributes: [] }, 
-    },
+    include: [
+      {
+        model: Microservice,
+        through: { attributes: [] },
+      },
+    ],
   });
 };
 

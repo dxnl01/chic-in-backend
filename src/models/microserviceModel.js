@@ -1,5 +1,5 @@
-const Service = require("./serviceModel");
-const ServiceMicroservices = require("./serviceMicroserviceModel");
+const { DataTypes } = require("sequelize");
+const sequelize = require("../config/db");
 
 module.exports = (sequelize, DataTypes) => {
   const Microservice = sequelize.define("Microservice", {
@@ -16,11 +16,6 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.TEXT,
       allowNull: false,
     },
-  });
-
-  Microservice.belongsToMany(Service, {
-    through: ServiceMicroservices,
-    foreignKey: "microserviceId",
   });
 
   return Microservice;
