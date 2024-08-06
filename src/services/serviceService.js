@@ -8,15 +8,15 @@ const createService = async (data) => {
     const microservicePromises = microservices.map(async (microserviceData) => {
       const [microservice] = await Microservice.findOrCreate({
         where: {
-          serviceType: microserviceData.serviceType,
+          service_type: microserviceData.serviceType,
           technique: microserviceData.technique,
         },
         defaults: microserviceData,
       });
-      return microservice.id;
+      return microservice;
     });
-    const microserviceIds = await Promise.all(microservicePromises);
-    await service.addMicroservices(microserviceIds); 
+    const microservicesInstances = await Promise.all(microservicePromises);
+    await service.addMicroservices(microservicesInstances);
   }
 
   return service;
