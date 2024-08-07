@@ -25,7 +25,7 @@ const Service = sequelize.define("Service", {
   },
   finishDate: {
     type: DataTypes.DATE,
-    allowNull: true,
+    allowNull: false,
   },
   status: {
     type: DataTypes.ENUM("Active", "Finished", "Declined", "Pending"),
@@ -34,7 +34,7 @@ const Service = sequelize.define("Service", {
   clientId: {
     type: DataTypes.INTEGER,
     references: {
-      model: "Client",
+      model: "Clients",
       key: "id",
     },
     allowNull: false,
@@ -42,7 +42,7 @@ const Service = sequelize.define("Service", {
   providerId: {
     type: DataTypes.INTEGER,
     references: {
-      model: "Provider",
+      model: "Providers",
       key: "id",
     },
     allowNull: true,

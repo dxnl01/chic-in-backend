@@ -13,8 +13,8 @@ const Provider = sequelize.define("Provider", {
   },
   email: {
     type: DataTypes.STRING,
-    unique: true,
     allowNull: false,
+    unique: true,
   },
   password: {
     type: DataTypes.STRING,

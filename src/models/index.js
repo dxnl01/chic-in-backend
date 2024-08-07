@@ -15,11 +15,11 @@ Service.belongsTo(Provider, { foreignKey: "providerId" });
 
 Service.belongsToMany(Microservice, {
   through: ServiceMicroservices,
-  foreignKey: "serviceId",
+  foreignKey: "service_id",
 });
 Microservice.belongsToMany(Service, {
   through: ServiceMicroservices,
-  foreignKey: "microserviceId",
+  foreignKey: "microservice_id",
 });
 
 module.exports = {

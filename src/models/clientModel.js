@@ -13,8 +13,8 @@ const Client = sequelize.define("Client", {
   },
   email: {
     type: DataTypes.STRING,
-    unique: true,
     allowNull: false,
+    unique: true,
   },
   password: {
     type: DataTypes.STRING,
