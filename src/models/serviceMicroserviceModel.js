@@ -2,14 +2,14 @@ const { DataTypes } = require("sequelize");
 const sequelize = require("../config/db");
 
 const ServiceMicroservices = sequelize.define("ServiceMicroservices", {
-  service_id: {
+  serviceId: {
     type: DataTypes.INTEGER,
     references: {
       model: "Services",
       key: "id",
     },
   },
-  microservice_id: {
+  microserviceId: {
     type: DataTypes.INTEGER,
     references: {
       model: "Microservices",
