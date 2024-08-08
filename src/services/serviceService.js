@@ -1,35 +1,24 @@
 const { Service, Microservice, ServiceMicroservices } = require("../models");
 
-const createService = async (data) => {
-  const { microservices, ...serviceData } = data;
-  const service = await Service.create(serviceData);
-
-  if (microservices && microservices.length > 0) {
-    const microservicePromises = microservices.map(async (microserviceData) => {
-      const [microservice] = await Microservice.findOrCreate({
-        where: {
-          serviceType: microserviceData.serviceType,
-          technique: microserviceData.technique,
-        },
-        defaults: microserviceData,
-      });
-      return microservice.id;
-    });
-    const microserviceIds = await Promise.all(microservicePromises);
-    await service.addMicroservices(microserviceIds);
-  }
-
-  return service;
+const createService = async (serviceData) => {
+  return await Service.create(serviceData);
 };
 
-const createMicroservice = async (data) => {
-  return await Microservice.create(data);
+const createMicroservice = async (microserviceData) => {
+  const [microservice] = await Microservice.findOrCreate({
+    where: {
+      serviceType: microserviceData.serviceType,
+      technique: microserviceData.technique,
+    },
+    defaults: microserviceData,
+  });
+  return microservice;
 };
 
 const addMicroserviceToService = async (serviceId, microserviceId) => {
   return await ServiceMicroservices.create({
-    service_id: serviceId,
-    microservice_id: microserviceId,
+    serviceId: serviceId,
+    microserviceId: microserviceId,
   });
 };
 
