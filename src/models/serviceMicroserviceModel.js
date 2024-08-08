@@ -8,6 +8,7 @@ const ServiceMicroservices = sequelize.define("ServiceMicroservices", {
       model: "Services",
       key: "id",
     },
+    primaryKey: true,
   },
   microserviceId: {
     type: DataTypes.INTEGER,
@@ -15,6 +16,17 @@ const ServiceMicroservices = sequelize.define("ServiceMicroservices", {
       model: "Microservices",
       key: "id",
     },
+    primaryKey: true,
+  },
+  createdAt: {
+    type: DataTypes.DATE,
+    allowNull: false,
+    defaultValue: DataTypes.NOW,
+  },
+  updatedAt: {
+    type: DataTypes.DATE,
+    allowNull: false,
+    defaultValue: DataTypes.NOW,
   },
 });
 
