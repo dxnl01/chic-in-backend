@@ -32,6 +32,7 @@ const Provider = sequelize.define("Provider", {
   },
   auth_token: {
     type: DataTypes.STRING,
+    allowNull: true,
   },
 });
 

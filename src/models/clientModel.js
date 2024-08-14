@@ -32,6 +32,7 @@ const Client = sequelize.define("Client", {
   },
   auth_token: {
     type: DataTypes.STRING,
+    allowNull: true,
   },
 });
 
