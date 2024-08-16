@@ -30,10 +30,6 @@ const Client = sequelize.define("Client", {
   phone: {
     type: DataTypes.STRING,
   },
-  auth_token: {
-    type: DataTypes.STRING,
-    allowNull: true,
-  },
 });
 
 module.exports = Client;

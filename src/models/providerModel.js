@@ -30,10 +30,6 @@ const Provider = sequelize.define("Provider", {
   categories: {
     type: DataTypes.ARRAY(DataTypes.TEXT),
   },
-  auth_token: {
-    type: DataTypes.STRING,
-    allowNull: true,
-  },
 });
 
 module.exports = Provider;
