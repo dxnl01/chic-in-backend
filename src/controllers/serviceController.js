@@ -1,5 +1,6 @@
 const serviceService = require("../services/serviceService");
 const clientService = require("../services/clientService");
+const { Microservice } = require("../models/microserviceModel");
 const { Vonage } = require("@vonage/server-sdk");
 
 const vonage = new Vonage({
