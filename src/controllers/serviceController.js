@@ -37,6 +37,7 @@ exports.requestService = async (req, res) => {
     const microserviceIds = [];
     for (const microserviceData of microservices) {
       const microservice = await serviceService.createMicroservice(
+        service.id,
         microserviceData
       );
       await serviceService.addMicroserviceToService(

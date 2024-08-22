@@ -4,14 +4,24 @@ const createService = async (serviceData) => {
   return await Service.create(serviceData);
 };
 
-const createMicroservice = async (microserviceData) => {
-  const [microservice] = await Microservice.findOrCreate({
+const createMicroservice = async (serviceId, microserviceData) => {
+  const [microservice, created] = await Microservice.findOrCreate({
     where: {
       serviceType: microserviceData.serviceType,
       technique: microserviceData.technique,
+      serviceId: serviceId, 
     },
-    defaults: microserviceData,
+    defaults: {
+      ...microserviceData,
+      quantity: microserviceData.quantity || 1, 
+    },
   });
+
+  if (!created) {
+    microservice.quantity += microserviceData.quantity || 1;
+    await microservice.save();
+  }
+
   return microservice;
 };
 

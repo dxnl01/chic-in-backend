@@ -15,6 +15,11 @@ const Microservice = sequelize.define("Microservice", {
     type: DataTypes.TEXT,
     allowNull: false,
   },
+  quantity: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    defaultValue: 1,
+  },
 });
 
 module.exports = Microservice;
