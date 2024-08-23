@@ -13,7 +13,7 @@ app.use(bodyParser.json());
 
 app.use("/api", router);
 
-sequelize.sync().then(() => {
+sequelize.sync({ alter: true }).then(() => {
   app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
   });
