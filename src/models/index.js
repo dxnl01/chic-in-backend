@@ -17,6 +17,7 @@ Microservice.belongsToMany(Service, {
   through: ServiceMicroservices,
   foreignKey: "microserviceId",
   otherKey: "serviceId",
+  onDelete: "CASCADE",
 });
 
 Client.hasMany(Service, { foreignKey: "clientId" });
